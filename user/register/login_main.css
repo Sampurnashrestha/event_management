@@ -1,0 +1,133 @@
+/* ======== Global Reset ======== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: url("../background.jpg") no-repeat center center/cover;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ======== Background Blur Overlay ======== */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 0;
+}
+
+/* ======== Auth Container ======== */
+.auth-container {
+  position: relative;
+  z-index: 1;
+  width: 400px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 40px 30px;
+  text-align: center;
+  color: #000;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+/* ======== Headings ======== */
+.auth-box h2 {
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 1px;
+}
+
+/* ======== Input Fields ======== */
+.auth-box input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  outline: none;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.auth-box input:focus {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.02);
+  border-color: #fff000;
+}
+
+/* ======== Buttons ======== */
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #fff000;
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-box button:hover {
+  background: #ff4d4d;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* ======== Links ======== */
+.auth-box p {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.auth-box a {
+  color: #fff000;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.auth-box a:hover {
+  color: #ff4d4d;
+}
+
+/* ======== Animation ======== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======== Responsive ======== */
+@media (max-width: 480px) {
+  .auth-container {
+    width: 90%;
+    padding: 30px 20px;
+  }
+}
