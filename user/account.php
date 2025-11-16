@@ -184,7 +184,7 @@ if (isset($_POST['update'])) {
 
     <ul class="nav-links">
       <li><a href="index.php" >Home</a></li>
-      <li><a href="events.html">Events</a></li>
+      <li><a href="events.php">Events</a></li>
       <li><a href="index.php#about">About</a></li>
       <li><a href="index.php#contact">Contact</a></li>
     </ul>

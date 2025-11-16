@@ -1,0 +1,132 @@
+/* ------------------------------
+  Body & Font
+------------------------------ */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f4f4f9;
+}
+
+/* ------------------------------
+  Sidebar Navbar
+------------------------------ */
+.admin-navbar {
+  width: 250px;
+  height: 100vh;
+  background: #1f1f1f;
+  color: #fff;
+  position: fixed;
+  padding: 30px 20px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+}
+
+.admin-navbar h2 {
+  font-size: 24px;
+  margin-bottom: 40px;
+  color: #f9d342;
+}
+
+.admin-navbar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-navbar ul li {
+  margin-bottom: 20px;
+}
+
+.admin-navbar ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  display: block;
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.admin-navbar ul li a:hover {
+  background: #f9d342;
+  color: #000;
+  font-weight: bold;
+}
+
+/* ------------------------------
+  Main Content
+------------------------------ */
+.admin-content {
+  margin-left: 270px;
+  padding: 50px 40px;
+  min-height: 100vh;
+}
+
+.admin-content h3 {
+  font-size: 30px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.admin-content p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+/* ------------------------------
+  Cards Section
+------------------------------ */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.card {
+  flex: 1;
+  min-width: 220px;
+  background: #fff;
+  padding: 30px 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.card h2 {
+  font-size: 40px;
+  margin-bottom: 10px;
+  color: #f9d342;
+}
+
+.card p {
+  font-size: 16px;
+  color: #333;
+}
+
+/* ------------------------------
+  Responsive
+------------------------------ */
+@media screen and (max-width: 900px) {
+  .admin-navbar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    box-shadow: none;
+  }
+
+  .admin-content {
+    margin-left: 0;
+    padding: 30px 20px;
+  }
+
+  .cards {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
