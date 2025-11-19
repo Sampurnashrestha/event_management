@@ -2,201 +2,229 @@
 include('../connection.php');
 session_start();
 
-
-
-// Delete Event
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    mysqli_query($conn, "DELETE FROM events WHERE id='$id'");
-    echo "<script>alert('Event deleted successfully!'); window.location='events.php';</script>";
-    exit;
+/* ===============================
+   DELETE VENUE
+================================ */
+if (isset($_GET['delete_venue'])) {
+    $id = intval($_GET['delete_venue']);
+    mysqli_query($conn, "DELETE FROM venue WHERE id = $id");
+    echo "<script>alert('Venue deleted successfully!'); window.location='events.php';</script>";
+    exit();
 }
 
-// Fetch all events
-$events = mysqli_query($conn, "SELECT * FROM events ORDER BY id DESC");
+/* ===============================
+   DELETE CATERING
+================================ */
+if (isset($_GET['delete_catering'])) {
+    $id = intval($_GET['delete_catering']);
+    mysqli_query($conn, "DELETE FROM catering WHERE id = $id");
+    echo "<script>alert('Catering deleted successfully!'); window.location='events.php';</script>";
+    exit();
+}
+
+/* ===============================
+   FETCH VENUE
+================================ */
+$venueData = mysqli_query($conn, "SELECT * FROM venue ORDER BY id DESC");
+
+/* ===============================
+   FETCH CATERING
+================================ */
+$cateringData = mysqli_query($conn, "SELECT * FROM catering ORDER BY id DESC");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Events - Admin Panel</title>
+<title>Manage Events</title>
+
 <link rel="stylesheet" href="admin_main.css">
+
 <style>
-/* ------------------------------ Container ------------------------------ */
-.container {
-    margin-left: 320px; /* matches navbar width */
-    padding: 40px;
-    min-height: 100vh;
-    background: #f4f4f9;
+/* -------- Page Layout -------- */
+.admin-content {
+    margin-left: 270px;
+    padding: 25px;
 }
 
-/* Header: title + add button inline */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+/* -------- Section Wrapper -------- */
+.section-box {
+    margin-bottom: 60px;
+    padding: 25px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.10);
 }
-.header h2 {
-    margin: 0;
-    font-size: 26px;
-    color: #333;
+
+/* Title */
+.section-box h2 {
+    margin: 0 0 15px 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
 }
+
+/* Add Button */
 .add-btn {
-    background: #007bff;
-    color: #fff;
-    padding: 8px 18px;
-    border-radius: 6px;
+    display: inline-block;
+    padding: 10px 18px;
+    background: #0275ff;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
     text-decoration: none;
-    transition: 0.3s;
+    border-radius: 8px;
+    margin-bottom: 18px;
 }
-.add-btn:hover { opacity: 0.85; }
 
-/* ------------------------------ Table Styling ------------------------------ */
-table {
+.add-btn:hover {
+    background: #005fcc;
+}
+
+/* Table */
+.table-box {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-}
-th, td {
-    padding: 12px 15px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-}
-th {
-    background-color: #007bff;
-    color: #fff;
-    font-weight: 600;
-    text-transform: uppercase;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.10);
 }
 
-/* Buttons */
-.btn {
+.table-box th {
+    background: #f9d342;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: #000;
+}
+
+.table-box td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.table-box tr:hover {
+    background: #f7f7f7;
+}
+
+/* Action buttons */
+.edit-btn, .delete-btn {
     padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
     font-size: 14px;
     text-decoration: none;
-    transition: 0.3s;
-}
-.edit { background: #28a745; color: #fff; }
-.delete { background: #dc3545; color: #fff; }
-.btn:hover { opacity: 0.85; }
-
-/* ------------------------------ Responsive Table ------------------------------ */
-@media (max-width: 768px) {
-    table, thead, tbody, th, td, tr { display: block; }
-    th { display: none; }
-    td {
-        position: relative;
-        padding-left: 50%;
-        text-align: left;
-        border-bottom: 1px solid #eee;
-    }
-    td::before {
-        position: absolute;
-        left: 15px;
-        top: 12px;
-        font-weight: bold;
-        color: #007bff;
-        content: attr(data-label);
-    }
-    .header { flex-direction: column; align-items: flex-start; }
-    .add-btn { margin-top: 10px; }
-}
-
-/* ------------------------------ Navbar Styling ------------------------------ */
-.admin-navbar {
-    width: 320px; /* matches margin-left of container */
-    background: #1f1f1f;
-    color: #fff;
-    position: fixed;
-    height: 100vh;
-    padding: 30px 20px;
-    box-sizing: border-box;
-}
-.admin-navbar h2 {
-    font-size: 24px;
-    color: #f9d342;
-    margin-bottom: 25px;
-}
-.admin-navbar ul {
-    list-style: none;
-    padding: 0;
-}
-.admin-navbar ul li {
-    margin-bottom: 15px;
-}
-.admin-navbar ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 16px;
-    display: block;
-    padding: 8px 12px;
     border-radius: 6px;
-    transition: 0.3s;
+    color: white;
 }
-.admin-navbar ul li a:hover {
-    background: #f9d342;
-    color: #000;
-    font-weight: bold;
+
+.edit-btn {
+    background: #198754;
+}
+
+.edit-btn:hover {
+    background: #157347;
+}
+
+.delete-btn {
+    background: #dc3545;
+}
+
+.delete-btn:hover {
+    background: #b02a37;
 }
 </style>
+
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- Sidebar -->
 <div class="admin-navbar">
-    <h2>Admin Panel</h2>
+    <h2>Admin Dashboard</h2>
     <ul>
-      <li><a href="users.php">Manage Users</a></li>
-      <li><a href="manage_events.php">Manage Events</a></li>
-      <li><a href="bookings.php">View Bookings</a></li>
-      <li><a href="logout.php">Logout</a></li>
+        <li><a href="users.php">Manage Users</a></li>
+        <li><a href="events.php" class="active">Manage Events</a></li>
+        <li><a href="bookings.php">View Bookings</a></li>
+        <li><a href="logout.php">Logout</a></li>
     </ul>
 </div>
 
-<!-- Main Container -->
-<div class="container">
-    <div class="header">
-        <h2>Manage Events</h2>
-        <a href="add_event.php" class="add-btn">+ Add Event</a>
-    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Location</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($row = mysqli_fetch_assoc($events)) { ?>
-            <tr>
-                <td data-label="ID"><?= $row['id']; ?></td>
-                <td data-label="Name"><?= htmlspecialchars($row['name']); ?></td>
-                <td data-label="Category"><?= $row['category']; ?></td>
-                <td data-label="Location"><?= htmlspecialchars($row['location']); ?></td>
-                <td data-label="Price">$<?= $row['price']; ?></td>
-                <td data-label="Status"><?= ucfirst($row['availability_status']); ?></td>
-                <td data-label="Actions">
-                    <a href="edit_event.php?id=<?= $row['id']; ?>" class="btn edit">Edit</a>
-                    <a href="events.php?delete=<?= $row['id']; ?>" class="btn delete" onclick="return confirm('Delete this event?')">Delete</a>
-                </td>
-            </tr>
-            <?php } ?>
-        </tbody>
+<!-- MAIN CONTENT -->
+<div class="admin-content">
+
+
+<!-- ============================
+     VENUE SECTION
+============================ -->
+<div class="section-box">
+    <h2>Manage Venue</h2>
+
+    <a href="add_venue.php" class="add-btn">+ Add Venue</a>
+
+    <table class="table-box">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Price (Rs.)</th>
+            <th>Action</th>
+        </tr>
+
+        <?php while ($v = mysqli_fetch_assoc($venueData)): ?>
+        <tr>
+            <td><?= $v['id'] ?></td>
+            <td><?= htmlspecialchars($v['name']) ?></td>
+            <td><?= htmlspecialchars($v['capacity']) ?></td>
+            <td><?= number_format($v['price']) ?></td>
+
+            <td>
+                <a href="edit_venue.php?id=<?= $v['id'] ?>" class="edit-btn">Edit</a>
+                <a href="events.php?delete_venue=<?= $v['id'] ?>" class="delete-btn"
+                   onclick="return confirm('Delete this venue?')">Delete</a>
+            </td>
+        </tr>
+        <?php endwhile; ?>
+
     </table>
+</div>
+
+
+
+<!-- ============================
+     CATERING SECTION
+============================ -->
+<div class="section-box">
+    <h2>Manage Catering</h2>
+
+    <a href="add_catering.php" class="add-btn">+ Add Catering</a>
+
+    <table class="table-box">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price Per Plate (Rs.)</th>
+            <th>Action</th>
+        </tr>
+
+        <?php while ($c = mysqli_fetch_assoc($cateringData)): ?>
+        <tr>
+            <td><?= $c['id'] ?></td>
+            <td><?= htmlspecialchars($c['name']) ?></td>
+            <td><?= number_format($c['price_per_plate']) ?></td>
+
+            <td>
+                <a href="edit_catering.php?id=<?= $c['id'] ?>" class="edit-btn">Edit</a>
+                <a href="events.php?delete_catering=<?= $c['id'] ?>" class="delete-btn"
+                   onclick="return confirm('Delete this catering item?')">Delete</a>
+            </td>
+        </tr>
+        <?php endwhile; ?>
+
+    </table>
+</div>
+
 </div>
 
 </body>

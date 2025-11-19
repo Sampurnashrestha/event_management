@@ -2,64 +2,72 @@
 session_start();
 include "../connection.php";
 
-if (!isset($_GET['event_id'])) {
-    echo "<script>alert('Invalid event!'); window.location='event.php';</script>";
+if (!isset($_GET['id']) || !isset($_GET['type'])) {
+    echo "<script>alert('Invalid request!'); window.location='event.php';</script>";
     exit();
 }
 
-$event_id = intval($_GET['event_id']);
+$item_id = intval($_GET['id']);
+$item_type = $_GET['type'];
 
-// Fetch event details
-$event_query = mysqli_query($conn, "SELECT * FROM events WHERE id='$event_id'");
-$event = mysqli_fetch_assoc($event_query);
+// Fetch correct table
+if ($item_type === "venue") {
+    $fetch = mysqli_query($conn, "SELECT * FROM venue WHERE id='$item_id'");
+} elseif ($item_type === "catering") {
+    $fetch = mysqli_query($conn, "SELECT * FROM catering WHERE id='$item_id'");
+} else {
+    echo "<script>alert('Invalid type!'); window.location='event.php';</script>";
+    exit();
+}
+
+$event = mysqli_fetch_assoc($fetch);
 
 if (!$event) {
-    echo "<script>alert('Event not found!'); window.location='event.php';</script>";
+    echo "<script>alert('Item not found!'); window.location='event.php';</script>";
     exit();
 }
 
 if (isset($_POST['submit'])) {
-    $event_type = mysqli_real_escape_string($conn, $_POST['event_type']);
+
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $total_person = intval($_POST['total_person']);
     $price = floatval($_POST['price']);
     $date = $_POST['date'];
+    $time_slot = mysqli_real_escape_string($conn, $_POST['time_slot']);
+    $purpose = mysqli_real_escape_string($conn, $_POST['purpose']);
     $message = mysqli_real_escape_string($conn, $_POST['message']);
 
-    // PRICE LIMIT
-    if ($price > 100000) {
-        echo "<script>alert('Price cannot exceed 100,000'); window.history.back();</script>";
-        exit();
-    }
+    // Check if already booked same date & time
+    $check = mysqli_query($conn,
+        "SELECT * FROM bookings WHERE item_id='$item_id' AND item_type='$item_type' AND date='$date' AND time_slot='$time_slot'"
+    );
 
-    // CHECK IF DATE ALREADY BOOKED FOR THIS EVENT
-    $check = mysqli_query($conn, "SELECT * FROM bookings WHERE event_id='$event_id' AND date='$date'");
     if (mysqli_num_rows($check) > 0) {
-        echo "<script>alert('Sorry! This event is already booked on that date.'); window.history.back();</script>";
+        echo "<script>alert('Already booked on that date & time!'); window.history.back();</script>";
         exit();
     }
 
-    // FIXED INSERT QUERY (Removed event_category)
-    $query = "INSERT INTO bookings (event_id, event_type, name, email, phone, total_person, price, date, message)
-              VALUES ('$event_id', '$event_type', '$name', '$email', '$phone', '$total_person', '$price', '$date', '$message')";
+    // Insert booking
+    $insert = mysqli_query($conn,
+        "INSERT INTO bookings (item_id, item_type, name, email, phone, total_person, price, date, time_slot, purpose, message)
+         VALUES ('$item_id', '$item_type', '$name', '$email', '$phone', '$total_person', '$price', '$date', '$time_slot', '$purpose', '$message')"
+    );
 
-    if (mysqli_query($conn, $query)) {
-        mysqli_query($conn, "UPDATE events SET availability_status='booked' WHERE id='$event_id'");
-        echo "<script>alert('Booking confirmed successfully!'); window.location.href='event.php';</script>";
+    if ($insert) {
+        echo "<script>alert('Booking confirmed successfully!'); window.location='event.php';</script>";
+        exit();
     } else {
-        echo "<script>alert('Error: Could not save booking'); window.history.back();</script>";
+        echo "<script>alert('Error booking'); window.history.back();</script>";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Event | Hamro Event</title>
+<title>Book Event</title>
 <link rel="stylesheet" href="nav.css">
 <link rel="stylesheet" href="user_main.css">
 
@@ -76,97 +84,92 @@ if (isset($_POST['submit'])) {
   background:rgba(255,255,255,0.1);
   padding:40px 30px;
   border-radius:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.4);
-  width:400px;
+  width:420px;
   backdrop-filter:blur(10px);
 }
-h2 { color: #f9d342; margin-bottom:20px; text-align:center;}
-.form-group { margin-bottom:15px;}
-label {display:block;font-size:14px;margin-bottom:5px;color:#f9d342;}
+h2 { color:#f9d342; margin-bottom:20px; text-align:center; }
+label { color:#f9d342; font-size:14px; }
 input, textarea, select {
-  width:100%; padding:10px; border-radius:8px; border:none;
-  background: rgba(255,255,255,0.2); color:white; font-size:14px; outline:none;
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  margin-bottom:15px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  border:none;
 }
-textarea{height:80px; resize:none;}
+.slot{
+  color: #000;
+}
 button {
-  width:100%; padding:12px; border:none; border-radius:25px;
-  background:#f9d342; color:black; font-weight:600; cursor:pointer; margin-top:10px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:20px;
+  background:#f9d342;
+  font-weight:bold;
 }
-button:hover {background:white;color:black;}
-.back-btn {display:block;text-align:center;margin-top:10px;color:#f9d342;text-decoration:none;font-size:14px;}
-.back-btn:hover {text-decoration:underline;}
+button:hover { background:white; }
+a.back-btn {
+  color:#f9d342; display:block; margin-top:10px; text-align:center;
+}
 </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="logo"><a href="index.php">Hamro<span> Event</span></a></div>
-    <ul class="nav-links">
-        <li><a href="index.php">Home</a></li>
-        <li><a href="event.php">Events</a></li>
-        <li><a href="book_event.php" class="active">Booking</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-</nav>
-
 <section class="booking">
   <div class="booking-container">
-    <h2><i class="fa-solid fa-calendar-check"></i> Book Your Event</h2>
+    <h2>Book: <?= $event['name'] ?> (<?= ucfirst($item_type) ?>)</h2>
 
     <form method="POST">
 
-      <input type="hidden" name="event_id" value="<?= $event['id'] ?>">
+      <label>Full Name</label>
+      <input type="text" name="name" required>
 
-      <div class="form-group">
-        <label>Event Type</label>
-        <select name="event_type" required>
-          <option value="">Select Event Type</option>
-          <option value="Birthday">Birthday</option>
-          <option value="Marriage">Marriage</option>
-          <option value="Engagement">Engagement</option>
-        </select>
-      </div>
+      <label>Email</label>
+      <input type="email" name="email" required>
 
-      <div class="form-group">
-        <label>Total Persons</label>
-        <input type="number" name="total_person" min="1" max="500" required>
-      </div>
+      <label>Phone</label>
+      <input type="text" name="phone" required>
 
-      <div class="form-group">
-        <label>Price</label>
-        <input type="number" name="price" max="100000" value="<?= $event['price'] ?>" required>
-      </div>
+      <label>Total Persons</label>
+      <input type="number" name="total_person" required>
 
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" name="name" required>
-      </div>
+      <label>Price</label>
+      <input type="number" name="price"
+        value="<?= $item_type=='venue' ? $event['price'] : $event['price_per_plate'] ?>" required>
 
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" name="email" required>
-      </div>
+      <label>Date</label>
+      <input type="date" name="date" min="<?= date('Y-m-d') ?>" required>
 
-      <div class="form-group">
-        <label>Phone Number</label>
-        <input type="text" name="phone" required>
-      </div>
+      <label>Select Time</label>
+      <select name="time_slot"  required>
+        <option value=""class="slot">-- Select Time --</option>
+        <option value="Morning (8 AM - 12 PM)" class="slot">Morning (8 AM - 12 PM)</option>
+        <option value="Afternoon (12 PM - 4 PM)" class="slot">Afternoon (12 PM - 4 PM)</option>
+        <option value="Evening (4 PM - 8 PM)" class="slot">Evening (4 PM - 8 PM)</option>
+        <option value="Night (8 PM - 11 PM)" class="slot">Night (8 PM - 11 PM)</option>
+      </select>
 
-      <div class="form-group">
-        <label>Event Date</label>
-        <input type="date" name="date" required min="<?= date('Y-m-d') ?>">
-      </div>
+      <label>Purpose of Event</label>
+      <select name="purpose"  required>
+        <option value="" class="slot">-- Select Event --</option>
+        <option value="Marriage" class="slot">Marriage</option>
+        <option value="Birthday" class="slot">Birthday</option>
+        <option value="Anniversary" class="slot">Anniversary</option>
+        <option value="Corporate Meeting" class="slot">Corporate Meeting</option>
+        <option value="Party" class="slot">Party</option>
+        <option value="Other" class="slot">Other</option>
+      </select>
 
-      <div class="form-group">
-        <label>Message (Optional)</label>
-        <textarea name="message"></textarea>
-      </div>
+      <label>Message (Optional)</label>
+      <textarea name="message"></textarea>
 
-      <button type="submit" name="submit">Confirm Booking</button>
+      <button name="submit">Confirm Booking</button>
     </form>
 
-    <a href="event.php" class="back-btn">← Back to Events</a>
+    <a href="event.php" class="back-btn">← Back</a>
   </div>
 </section>
 

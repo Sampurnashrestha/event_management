@@ -177,27 +177,26 @@ if (isset($_POST['update'])) {
 </head>
 
 <body>
-     <nav class="navbar">
-    <div class="logo">
-      <a href="index.html">Hamro<span> Event</span></a>
-    </div>
+   <nav class="navbar">
+  <div class="logo">
+    <a href="index.php">Hamro<span> Event</span></a>
+  </div>
 
-    <ul class="nav-links">
-      <li><a href="index.php" >Home</a></li>
-      <li><a href="events.php">Events</a></li>
-      <li><a href="index.php#about">About</a></li>
-      <li><a href="index.php#contact">Contact</a></li>
+  <ul class="nav-links">
+    <li><a href="index.php" class="active">Home</a></li>
+    <li><a href="event.php">Events</a></li>
+    <li><a href="index.php#about">About</a></li>
+    <li><a href="index.php#contact">Contact</a></li>
+  </ul>
+
+  <div class="account" tabindex="0">
+    <a href="#" class="account-icon"><i class="fa-solid fa-user-circle"></i></a>
+    <ul class="account-dropdown">
+      <li><a href="account.php">Profile</a></li>
+      <li><a href="../user/register/logout.php">Logout</a></li>
     </ul>
-
-
-    <div class="account" tabindex="0">
-      <a href="#" class="account-icon"><i class="fa-solid fa-user-circle"></i></a>
-      <ul class="account-dropdown">
-        <li><a href="account.php">Profile</a></li>
-        <li><a href="../user/register/logout.php">Logout</a></li>
-      </ul>
-    </div>
-  </nav>
+  </div>
+</nav>
     <section class="account_section">
         <div class="account-box">
             <h2>My Account</h2>

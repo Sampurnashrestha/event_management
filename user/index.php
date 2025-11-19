@@ -31,7 +31,6 @@ $user = mysqli_fetch_assoc($query);
   <ul class="nav-links">
     <li><a href="index.php" class="active">Home</a></li>
     <li><a href="event.php">Events</a></li>
-    <li><a href="book_event.php">Booking</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -74,35 +73,17 @@ $user = mysqli_fetch_assoc($query);
 <section class="event-list-section">
   <h3>Our Event Services</h3>
   <div class="event-container">
-    <a href="event.php?category=venues" class="event-item">
+    <a href="event.php?category=venue" class="event-item">
       <i class="fa-solid fa-building-columns"></i>
       <p>Venues</p>
     </a>
 
-    <a href="event.php?category=decorations" class="event-item">
-      <i class="fa-solid fa-fan"></i>
-      <p>Decorations</p>
-    </a>
-
-    <a href="event.php?category=services" class="event-item">
-      <i class="fa-solid fa-pen-nib"></i>
-      <p>Services</p>
-    </a>
 
     <a href="event.php?category=catering" class="event-item">
       <i class="fa-solid fa-utensils"></i>
       <p>Catering</p>
     </a>
 
-    <a href="event.php?category=makeup" class="event-item">
-      <i class="fa-solid fa-paintbrush"></i>
-      <p>Makeup Artist</p>
-    </a>
-
-    <a href="event.php?category=photography" class="event-item">
-      <i class="fa-solid fa-camera"></i>
-      <p>Photography</p>
-    </a>
   </div>
 </section>
 
